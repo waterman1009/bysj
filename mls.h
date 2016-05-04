@@ -1,25 +1,34 @@
 #ifndef _MLS_H
 #define _MLS_H
 
-#include "../Base/Mesh.h"
-#include "../Object/Shape.h"
+#include "../base/Mesh.h"
+#include "../base/Vec2.h"
+#include "../Base/Lattice.h"
 #include "../Base/Polygon.h"
+#include <math.h>
 
 
 class CMLS
 {
-	void setImage(CLattice* srcGrid,varray<CPloygon *> srcFeatureLine);
+public:
 
-	void deform(varray<CPloygon *> targetFeatureLine);
+	CMLS();
+	~CMLS();
 
-	varray<Vec2> getTargetGrid();
+	void SetLatticeFeatureLine(CLattice* srcGrid,const varray<CPolygon *>& srcFeatureLine);
+
+	void DeformMesh(const varray<CPolygon *>& targetFeatureLine);
+
+	const varray<double>& GetDeformLatticeVPos() const;
+
+private:
 
 	CLattice * _srcGrid;
-	varray<CPloygon *> _srcFeatureLine;
+	varray<CPolygon *> _srcFeatureLine;
 
-	varray<Vec2> _targetGrid;
+	varray<double> _targetGrid;
 
-	varray<double> _preCalculatedArray;
+	varray<double> _precalculatedArray;
 
 	varray< varray<double> > _sumDeltaArray;
 

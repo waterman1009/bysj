@@ -1,5 +1,4 @@
 #include "mls.h"
-#include <cmath>
 
 
 
@@ -7,13 +6,13 @@ CMLS::CMLS() {}
 
 CMLS::~CMLS() {}
 
-void CMLS::setImage(CLattice* srcGrid,varray<CPloygon *> srcFeatureLine) {
+void CMLS::SetLatticeFeatureLine(CLattice* srcGrid,const varray<CPolygon *>& srcFeatureLine) {
 	//	循环原图所有网格点
 	_srcGrid = srcGrid;
 
 	varray<double> arrayVertexPos = srcGrid->GetVertexPos();
 
-	for (int i=0; i<arrayVertexPos.size()/2; k++) {
+	for (int i=0; i<arrayVertexPos.size()/2; i++) {
 		Vec2 v(arrayVertexPos[ i+i ],arrayVertexPos[ i+i+1 ]);
 
 		bool isBreak = false;
@@ -149,7 +148,7 @@ void CMLS::setImage(CLattice* srcGrid,varray<CPloygon *> srcFeatureLine) {
 	return ;
 }
 
-void CMLS::deform(varray<CPloygon *> targetFeatureLine) {
+void CMLS::DeformMesh(const varray<CPolygon *>& targetFeatureLine) {
 	//	循环原图所有网格点
 	varray<double> arrayVertexPos = _srcGrid->GetVertexPos();
 
@@ -189,7 +188,8 @@ void CMLS::deform(varray<CPloygon *> targetFeatureLine) {
 					Vec2 bi(bx,by);
 					double fvx = (di._x-ci._x)*(v._x-ai._x)/(bi._x-ai._x)+ci._x;
 					double fvy = (di._y-ci._y)*(v._y-ai._y)/(bi._y-ai._y)+ci._y;
-					_targetGrid.push_back(new Vec2(fvx,fvy));
+					_targetGrid.push_back(fvx);
+					_targetGrid.push_back(fvy);
 					break;
 				}
 
@@ -241,17 +241,19 @@ void CMLS::deform(varray<CPloygon *> targetFeatureLine) {
 				double a30 = _precalculatedArray[precalucatedPos++];
 				double a31 = _precalculatedArray[precalucatedPos++];
 
-				frv += new Vec2(ci._x*a00+ci._y*a10+di._x*a20+di._y*a30 , ci._x*a01+ci._y*a11+di._x*a21+di._y*a31);
+				frv._x += ci._x*a00+ci._y*a10+di._x*a20+di._y*a30;
+				frv._y += ci._x*a01+ci._y*a11+di._x*a21+di._y*a31;
 
 			}
 		}
 		Vec2 ans = frv/frv.Magnitude()*(v-weightP).Magnitude()+weightQ;
 
-		_targetGrid.push_back(ans);
+		_targetGrid.push_back(ans._x);
+		_targetGrid.push_back(ans._y);
 	}
 	return ;
 }
 
-varray<Vec2> CMLS::getTargetGrid() {
+const varray<double>& CMLS::GetDeformLatticeVPos() const {
 	return _targetGrid;
 }
