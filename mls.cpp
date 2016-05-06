@@ -9,9 +9,24 @@ CMLS::~CMLS() {}
 void CMLS::SetLatticeFeatureLine(CLattice* srcGrid,const varray<CPolygon *>& srcFeatureLine) {
 
 	// isNewInput
+	if (srcGrid == _srcGrid && srcFeatureLine.size() == _srcFeatureLine.size()) {
+		bool isNewInput = true;
+		for (int i=0; i<srcFeatureLine.size(); i++) {
+			if (srcFeatureLine[i] != _srcFeatureLine[i]) {
+				isNewInput = false;
+				break;
+			}
+		}
+		if (isNewInput) {
+			return ;
+		}
+	}
+	_precalculatedArray.clear();
+	_sumDeltaArray.clear();
 
 	//	循环原图所有网格点
 	_srcGrid = srcGrid;
+	_srcFeatureLine = srcFeatureLine;
 
 	varray<double>& arrayVertexPos = srcGrid->GetVertexPos();
 
